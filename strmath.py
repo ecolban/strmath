@@ -3,6 +3,7 @@ Created on Jan 31, 2016
 
 @author: Erik Colban
 '''
+from pip._vendor.requests.packages.chardet.utf8prober import ONE_CHAR_PROB
 class Number:
     
     # Defining 32-bit numbers
@@ -177,8 +178,30 @@ zero = Number('0')
 one = Number('1')
 ten = Number('5') << one
 
-def multiply_my_numbers(s1, s2):
-    return str(Number(s1) * Number(s2))
+def multmod(m, n, mod):
+    b, p = one, zero
+    while b <= n: b <<= one
+    while b > one:
+        b >>= one
+        p <<= one
+        if p >= mod: p -= mod
+        if b <= n:
+            n -=b
+            p += m
+            if p >= mod: p -= mod
+    return p
+
+def powmod(m, n, mod):
+    b, p = one, one
+    while b <= n: b <<= one
+    while b > one:
+        b >>= one
+        p = multmod(p, p, mod)
+        if b <= n:
+            n -= b
+            p = multmod(p, m, mod)
+    return p
+    
 
 
 
