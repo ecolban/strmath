@@ -3,7 +3,6 @@ Created on Jan 31, 2016
 
 @author: Erik Colban
 '''
-from pip._vendor.requests.packages.chardet.utf8prober import ONE_CHAR_PROB
 class Number:
     
     # Defining 32-bit numbers
