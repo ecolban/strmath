@@ -20,14 +20,16 @@ class Number(object):
         '9':'00000000000000000000000000001001'}
 
     binary_to_digit = {b:d for d, b in digit_to_binary.items()}
+    
 
-    def __init__(self, s, dec=True):
+    def __init__(self, s, binary=False):
         # should have validated s, but trusting the client instead
-        if not dec: self._value = s
+        if binary: self._value = s
         elif s in Number.digit_to_binary: self._value = Number.digit_to_binary[s]
         else:
             n = zero
             sgn = one
+            ten = Number('00000000000000000000000000001010', binary=True)
             for d in s:
                 if d == '-': sgn = -sgn
                 else:
@@ -52,7 +54,7 @@ class Number(object):
                 value = '0' + value
             else:
                 value = '1' + value
-        return Number(value, dec=False)
+        return Number(value, binary=True)
 
 
 
@@ -74,11 +76,11 @@ class Number(object):
         # using zip to truncate s to the length of zero._value
         r = zip(s, zero._value)
         s, _ = zip(*r)
-        return Number(''.join(s), dec=False)
+        return Number(''.join(s), binary=True)
 
     def __neg__(self):
         one_complement = ''.join('1' if c == '0' else '0' for c in self._value)
-        return Number(one_complement, dec=False) + one
+        return Number(one_complement, binary=True) + one
 
     def __sub__(self, other):
         return self + -other
@@ -163,6 +165,7 @@ class Number(object):
 
 
     def __str__(self):
+        ten = Number('10')
         if self == zero: return '0'
         if self < zero: return '-' + str(-self)
         result = ""
@@ -175,7 +178,7 @@ class Number(object):
 
 zero = Number('0')
 one = Number('1')
-ten = Number('5') << one
+
 
 def multmod(m, n, mod):
     b, p = one, zero
