@@ -3,7 +3,7 @@ Created on Jan 31, 2016
 
 @author: Erik Colban
 '''
-class Number:
+class Number(object):
     
     # Defining 32-bit numbers
 
@@ -23,8 +23,8 @@ class Number:
 
     def __init__(self, s, dec=True):
         # should have validated s, but trusting the client instead
-        if not dec: self.value = s
-        elif len(s) == 1: self.value = Number.digit_to_binary[s]
+        if not dec: self._value = s
+        elif s in Number.digit_to_binary: self._value = Number.digit_to_binary[s]
         else:
             n = zero
             sgn = one
@@ -33,12 +33,12 @@ class Number:
                 else:
                     n *= ten
                     n += Number(d)
-            self.value = (sgn * n).value
+            self._value = (sgn * n)._value
                      
 
         
     def __add__(self, other):
-        s = zip(self.value, other.value)
+        s = zip(self._value, other._value)
         value = ''
         carry = '0'
         for x in reversed(s):
@@ -66,35 +66,35 @@ class Number:
 
     def __rshift__(self, other):
         b = one
-        s = self.value
+        s = self._value
         c = '1' if self.__is_negative() else '0'
         while b <= other:
             s = c + s
             b += one
-        # using zip to truncate s to the length of zero.value
-        r = zip(s, zero.value)
+        # using zip to truncate s to the length of zero._value
+        r = zip(s, zero._value)
         s, _ = zip(*r)
         return Number(''.join(s), dec=False)
 
     def __neg__(self):
-        one_complement = ''.join('1' if c == '0' else '0' for c in self.value)
+        one_complement = ''.join('1' if c == '0' else '0' for c in self._value)
         return Number(one_complement, dec=False) + one
 
     def __sub__(self, other):
         return self + -other
 
     def __is_negative(self):
-        return next(iter(self.value)) == '1'
+        return next(iter(self._value)) == '1'
 
     def __abs__(self):
         if self.__is_negative(): return -self
         else: return self
 
     def __eq__(self, other):
-        return self.value == other.value
+        return self._value == other._value
 
     def __ne__(self, other):
-        return self.value != other.value
+        return self._value != other._value
 
     def __gt__(self, other):
         return (other - self).__is_negative()
@@ -169,7 +169,7 @@ class Number:
         s = self
         while s > zero:
             s, r = divmod(s, ten)
-            result = Number.binary_to_digit[r.value] + result
+            result = Number.binary_to_digit[r._value] + result
         return result
 
 
