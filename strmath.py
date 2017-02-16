@@ -1,3 +1,10 @@
+def truncate_left(s):
+    return s[1:]
+
+def truncate_right(s):
+    return s[:-1]
+
+
 '''
 Created on Jan 31, 2016
 
@@ -56,27 +63,23 @@ class Number(object):
                 value = '1' + value
         return Number(value, binary=True)
 
-
-
     def __lshift__(self, other):
         b = one
-        s = self
+        s = self._value
         while b <= other:
-            s = s + s
+            s = truncate_left(s + '0')
             b = b + one
-        return s
+        return Number(s, binary=True)
 
     def __rshift__(self, other):
         b = one
         s = self._value
         c = '1' if self.__is_negative() else '0'
         while b <= other:
-            s = c + s
+            s = truncate_right(c + s)
             b += one
-        # using zip to truncate s to the length of zero._value
-        r = zip(s, zero._value)
-        s, _ = zip(*r)
-        return Number(''.join(s), binary=True)
+        return Number(s, binary=True)
+
 
     def __neg__(self):
         one_complement = ''.join('1' if c == '0' else '0' for c in self._value)
@@ -104,23 +107,24 @@ class Number(object):
     def __ge__(self, other):
         return self == other or self > other
 
+    def __lt__(self, other):
+        return (self - other).__is_negative()
+
+    def __le__(self, other):
+        return self == other or self < other
+
     def __mul__(self, other):
         if self.__is_negative():
             return -(-self * other)
-        s1 = self
-        b = one
         result = zero
-        while b <= s1:
-            b <<= one
-        while b > one:
-            b >>= one
+        for b in self._value:
             result <<= one
-            if s1 >= b:
-                s1 -= b
+            if b == '1':
                 result += other
         return result
 
     def __divmod__(self, other):
+        '''The remainder is always of the same sign as the modulus'''
         if self.__is_negative() and other.__is_negative():
             q, r = divmod(-self, -other)
             return q, -r
@@ -139,16 +143,10 @@ class Number(object):
                 q -= one
             return q, r
         else: # neither self nor other is negative
-            s1 = self
-            b = one
             q, r = zero, zero
-            while s1 >= b:
-                b <<= one
-            while b > one:
-                b >>= one
+            for b in self._value:
                 q, r = q << one, r << one
-                if s1 >= b:
-                    s1 -= b
+                if b == '1':
                     r += one
                 if r >= other:
                     r -= other
