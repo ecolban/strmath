@@ -161,6 +161,8 @@ class Number(object):
         _, r = divmod(self, other)
         return r
 
+    def __repr__(self):
+        return "Number('%s')" % str(self)
 
     def __str__(self):
         ten = Number('10')
@@ -201,27 +203,3 @@ def powmod(m, n, mod):
             n -= b
             p = multmod(p, m, mod)
     return p
-    
-
-
-
-
-        
-
-
-
-    
-
-
-                  
-    
-    
-
-
-        
-
-
-    
-    
-                
-    
