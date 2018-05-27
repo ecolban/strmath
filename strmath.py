@@ -10,12 +10,12 @@ def last(s):
     return s[-1]
 
 
-class Number(object):
-    '''
+class StrNum(object):
+    """
     Created on Jan 31, 2016
 
     @author: Erik Colban
-    '''
+    """
     
     # Defining 32-bit numbers in little-endian
     digit_to_binary = {
@@ -31,14 +31,13 @@ class Number(object):
         '9':'10010000000000000000000000000000'}
 
     binary_to_digit = {b: d for d, b in digit_to_binary.items()}
-    
 
     def __init__(self, s, binary=False):
         # should have validated s, but trusting the client instead
         if binary:
             self._value = s
-        elif s in Number.digit_to_binary:
-            self._value = Number.digit_to_binary[s]
+        elif s in StrNum.digit_to_binary:
+            self._value = StrNum.digit_to_binary[s]
         else:
             n = zero
             sgn = one
@@ -46,7 +45,7 @@ class Number(object):
                 if d == '-': sgn = -sgn
                 else:
                     n *= ten
-                    n += Number(d)
+                    n += StrNum(d)
             self._value = (sgn * n)._value
 
     def __add__(self, other):
@@ -65,7 +64,7 @@ class Number(object):
                 else:
                     yield '1'
 
-        return Number(''.join(bit_gen()), binary=True)
+        return StrNum(''.join(bit_gen()), binary=True)
 
     def __lshift__(self, other):
         b = one
@@ -73,7 +72,7 @@ class Number(object):
         while b <= other:
             s = truncate_right('0' + s)
             b = b + one
-        return Number(s, binary=True)
+        return StrNum(s, binary=True)
 
     def __rshift__(self, other):
         b = one
@@ -82,12 +81,12 @@ class Number(object):
         while b <= other:
             s = truncate_left(s + c)
             b += one
-        return Number(s, binary=True)
+        return StrNum(s, binary=True)
 
 
     def __neg__(self):
         one_complement = ''.join('1' if c == '0' else '0' for c in self._value)
-        return Number(one_complement, binary=True) + one
+        return StrNum(one_complement, binary=True) + one
 
     def __sub__(self, other):
         return self + -other
@@ -156,7 +155,7 @@ class Number(object):
                 if r >= other:
                     r -= other
                     q += one
-            return (q, r)
+            return q, r
 
     def __floordiv__(self, other):
         q, _ = divmod(self, other)
@@ -176,25 +175,23 @@ class Number(object):
                 p = p.__mul__(self, mod)
         return p
 
-
     def __repr__(self):
-        return "Number('%s')" % str(self)
+        return "StrNum('%s')" % str(self)
 
     def __str__(self):
-        ten = Number('10')
         if self == zero: return '0'
         if self < zero: return '-' + str(-self)
         result = ""
         s = self
         while s > zero:
-            s, r = divmod(s, ten)
-            result = Number.binary_to_digit[r._value] + result
+            s, r = s.__divmod__(ten)
+            result = StrNum.binary_to_digit[r._value] + result
         return result
 
     def __hash__(self):
         return hash(self._value)
 
 
-zero = Number('0')
-one  = Number('1')
-ten  = Number('01010000000000000000000000000000', binary=True)
+zero = StrNum('0')
+one  = StrNum('1')
+ten  = StrNum('01010000000000000000000000000000', binary=True)
