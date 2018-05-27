@@ -11,11 +11,11 @@ these operations. Comparisons may be invoked using <, <=, ==, >=, and >.
 
 Example:
     
-    >>> print(Number('13') * Number('1071'))
+    >>> print(StrNum('13') * StrNum('1071'))
     13923
-    >>> print((Number('-1024') >> Number('2')) * Number('12') + Number('15'))
+    >>> print((StrNum('-1024') >> StrNum('2')) * StrNum('12') + StrNum('15'))
     -3057
-    >>> print('q = %s, r = %s' % divmod(Number('21809'), Number('101')))
+    >>> print('q = %s, r = %s' % divmod(StrNum('21809'), StrNum('101')))
     q = 215, r = 94
 
 These calculations may be verified using ordinary arithmetic:
@@ -30,11 +30,11 @@ These calculations may be verified using ordinary arithmetic:
 The code also provides example implementations of the functions `multmod` and `powmod`, which are identical to the 
 implementations of these functions using ordinary arithmetic except that the `strmath` equivalents of certain 
 constants are used. For example, `zero` and `one` is used instead of `0` and `1`. Note that `zero` is defined as
-`Number('0')` and `one` is defined as `Number('1')`.
+`StrNum('0')` and `one` is defined as `StrNum('1')`.
 
 Example:
 
-    >>> print(powmod(Number('23'), Number('12345'), Number('700')))
+    >>> print(powmod(StrNum('23'), StrNum('12345'), StrNum('700')))
     43
 
 This result may be verified using the built-in function `pow`:
