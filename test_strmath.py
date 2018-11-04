@@ -5,6 +5,7 @@ from strmath import StrNum
 
 
 class TestStrmath(TestCase):
+
     def testInit(self):
         eleven = StrNum('11')
         self.assertIsNotNone(eleven, "eleven should be a Number instance")
@@ -24,7 +25,19 @@ class TestStrmath(TestCase):
         twelve = StrNum('12')
         self.assertEqual(eleven + twelve, StrNum('23'))
 
+    def testGt(self):
+        a = StrNum('-2')
+        b = StrNum('-1')
+        c = StrNum('0')
+        d = StrNum('1')
+        e = StrNum('2')
+        self.assertTrue(a < b < c < d < e)
+
     def testMul(self):
+        op1 = StrNum("-15")
+        op2 = StrNum("17")
+        mod = StrNum("20")
+        self.assertEqual(op1.__mul__(op2, mod), StrNum(str(-15 * 17 % 20)))
         op1 = StrNum('123456')
         op2 = StrNum('654321')
         mod = StrNum('675')
@@ -34,7 +47,7 @@ class TestStrmath(TestCase):
         self.assertEqual(op1 * op2, StrNum(str(327 * 765)))
 
     def testDivmod(self):
-        self.assertEqual(divmod(StrNum('140'), StrNum('12')), (StrNum('11'), StrNum('8')))
+        self.assertEqual(divmod(-StrNum('140'), StrNum('12')), (-StrNum('12'), StrNum('4')))
 
     def testDiv(self):
         self.assertEqual(StrNum('140') // StrNum('12'), StrNum('11'))
@@ -43,15 +56,14 @@ class TestStrmath(TestCase):
         self.assertEqual(StrNum('140') % StrNum('12'), StrNum('8'))
 
     def testPow(self):
-        start = now()
-        base = StrNum('4020034')
-        exponent = StrNum('168945678')
-        mod = StrNum('75242567')
-        n = pow(4020034, 168945678, 75242567)
+        args = (740_227_090, 871_816_537, 1_073_058_648)
+        n = pow(*args)
         self.assertTrue(isinstance(n, int))
         expected = StrNum(str(n))
         self.assertTrue(isinstance(expected, StrNum))
-        self.assertEqual(pow(base, exponent, mod), expected)
+        start = now()
+        str_num_args = (StrNum(str(a)) for a in args)
+        self.assertEqual(pow(*str_num_args), expected)
         print(now() - start)
 
     def testRepr(self):
